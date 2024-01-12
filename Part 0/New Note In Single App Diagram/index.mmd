@@ -1,0 +1,8 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa | payload -> {"content": "Entering data","date": "2024-01-12T16:41:04.419Z"}
+    activate server
+    server-->>browser: send JSON response {"message":"note created"}
+    deactivate server
