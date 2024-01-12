@@ -28,8 +28,14 @@ const App = () => {
   const [selected, setSelected] = useState(0)
 
   const handleNextSelect = () => {
-    const randomSelection = getRandomInt(0, anecdotes.length - 1)
-    setSelected(randomSelection)
+    let isLoop = true
+    while (isLoop) {
+      const randomSelection = getRandomInt(0, anecdotes.length - 1)
+      if (randomSelection !== selected) {
+        setSelected(randomSelection)
+        isLoop = false
+      }
+    }
   }
 
   const handleVoteClick = () => {
