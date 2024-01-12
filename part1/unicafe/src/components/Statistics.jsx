@@ -5,23 +5,33 @@ const Statistics = ({ good, bad, neutral }) => {
   const average = (good + bad + neutral) / 3
   const percentage = allStats > 0 ? (good / allStats) * 100 : 0
 
-  if (allStats === 0) return <Statement label={'No feedback Given'} />
+  if (allStats === 0)
+    return (
+      <table>
+        <tbody>
+          <Statement text={'No feedback Given'} />
+        </tbody>
+      </table>
+    )
   return (
-    <>
-      <Statement label={'Good'} count={good} />
-      <Statement label={'Neutral'} count={neutral} />
-      <Statement label={'Bad'} count={bad} />
-      <Statement label={'All'} count={allStats} />
-      <Statement label={'Average'} count={average} />
-      <Statement label={'Positive'} count={`${percentage}%`} />
-    </>
+    <table>
+      <tbody>
+        <Statement text={'Good'} value={good} />
+        <Statement text={'Neutral'} value={neutral} />
+        <Statement text={'Bad'} value={bad} />
+        <Statement text={'All'} value={allStats} />
+        <Statement text={'Average'} value={average} />
+        <Statement text={'Positive'} value={`${percentage}%`} />
+      </tbody>
+    </table>
   )
 }
 
-const Statement = ({ label, count = '' }) => (
-  <p>
-    {label} {count}
-  </p>
+const Statement = ({ text, value = '' }) => (
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 )
 
 export default Statistics
