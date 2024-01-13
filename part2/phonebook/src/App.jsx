@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import SubHeading from './components/SubHeading'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
+import SubHeading from './components/SubHeading'
 import PhoneBookForm from './forms/PhoneBookForm'
-import axios from 'axios'
+import personService from './services/person'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,24 +12,41 @@ const App = () => {
   const [filterName, setFilterName] = useState('')
 
   const [filteredPersons, setFilteredPersons] = useState([])
-
+  console.log({ persons })
   const handleSubmit = (e) => {
     e.preventDefault()
     const newNameTrimmed = newName.trim()
     if (newNameTrimmed.trim() === '') {
       alert('Empty name cannot be added to phonebook')
     } else if (persons.some((person) => person.name === newNameTrimmed)) {
-      alert(`${newNameTrimmed} is already added to phonebook`)
+      if (
+        window.confirm(
+          `${newNameTrimmed} is already added to phonebook, replace the old number with the new one?`
+        )
+      ) {
+        const person = persons.find((p) => p.name === newNameTrimmed)
+        personService
+          .update(person.id, { name: person.name, number: newNumber })
+          .then(init)
+          .catch((err) => console.log({ err }))
+      }
     } else {
-      const newPersonsList = [
-        ...persons,
-        { name: newNameTrimmed, number: newNumber, id: persons.length + 1 },
-      ]
-      setPersons(newPersonsList)
-      const filterHandlerFunction = handleSearch(newPersonsList)
-      filterHandlerFunction(filterName)
-      setNewName('')
-      setNewNumber('')
+      const personObject = {
+        name: newNameTrimmed,
+        number: newNumber,
+      }
+      personService
+        .create(personObject)
+        .then((response) => {
+          const newPersonsList = [...persons, response]
+          setPersons(newPersonsList)
+
+          const filterHandlerFunction = handleSearch(newPersonsList)
+          filterHandlerFunction(filterName)
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch((err) => console.log({ err }))
     }
   }
 
@@ -40,14 +57,24 @@ const App = () => {
     setFilterName(e?.target?.value ?? e)
     const searchVal = (e?.target?.value ?? e).toLowerCase()
 
-    const filteredList = list.filter((item) => item.name.toLowerCase().includes(searchVal))
+    const filteredList = list.filter((item) => item?.name?.toLowerCase().includes(searchVal))
     setFilteredPersons(filteredList)
   }
 
+  const handleDelete = (data) => () => {
+    if (window.confirm(`Delete ${data.name} ?`)) {
+      personService
+        .remove(data.id)
+        .then(init)
+        .catch((err) => console.log({ err }))
+    }
+  }
+
   const init = () => {
-    axios.get('http://localhost:3001/persons').then((response) => {
-      setPersons(response.data)
-      setFilteredPersons(response.data)
+    personService.getAll().then((response) => {
+      setPersons(response)
+      const filterHandlerFunction = handleSearch(response)
+      filterHandlerFunction(filterName)
     })
   }
 
@@ -71,7 +98,7 @@ const App = () => {
         handleSubmit={handleSubmit}
       />
       <SubHeading title={'Numbers'} />
-      <Persons list={filteredPersons} />
+      <Persons list={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
