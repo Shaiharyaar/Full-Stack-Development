@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
+import Footer from './components/Footer'
 import SubHeading from './components/SubHeading'
 import PhoneBookForm from './forms/PhoneBookForm'
 import personService from './services/person'
@@ -10,9 +12,9 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
-
+  const [notification, setNotification] = useState(null)
   const [filteredPersons, setFilteredPersons] = useState([])
-  console.log({ persons })
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const newNameTrimmed = newName.trim()
@@ -28,7 +30,10 @@ const App = () => {
         personService
           .update(person.id, { name: person.name, number: newNumber })
           .then(init)
-          .catch((err) => console.log({ err }))
+          .catch((err) => {
+            console.log({ err })
+            setNotification({ color: 'red', message: `Failed to update '${newNameTrimmed}'!` })
+          })
       }
     } else {
       const personObject = {
@@ -40,13 +45,17 @@ const App = () => {
         .then((response) => {
           const newPersonsList = [...persons, response]
           setPersons(newPersonsList)
+          setNotification({ color: 'green', message: `Added ${response.name}!` })
 
           const filterHandlerFunction = handleSearch(newPersonsList)
           filterHandlerFunction(filterName)
           setNewName('')
           setNewNumber('')
         })
-        .catch((err) => console.log({ err }))
+        .catch((err) => {
+          console.log({ err })
+          setNotification({ color: 'red', message: `Failed to add '${newNameTrimmed}'!` })
+        })
     }
   }
 
@@ -66,27 +75,51 @@ const App = () => {
       personService
         .remove(data.id)
         .then(init)
-        .catch((err) => console.log({ err }))
+        .catch((err) => {
+          console.log({ err })
+          setNotification({
+            color: 'red',
+            message: `Information of ${data.name} has already been removed from server`,
+          })
+          init()
+        })
     }
   }
 
   const init = () => {
-    personService.getAll().then((response) => {
-      setPersons(response)
-      const filterHandlerFunction = handleSearch(response)
-      filterHandlerFunction(filterName)
-    })
+    personService
+      .getAll()
+      .then((response) => {
+        setPersons(response)
+        const filterHandlerFunction = handleSearch(response)
+        filterHandlerFunction(filterName)
+      })
+      .catch((err) => {
+        console.log({ err })
+        setNotification({ color: 'red', message: `Failed to get phonebook list` })
+      })
   }
 
   // hooks
 
   useEffect(() => {
     init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (notification?.message) {
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notification?.message])
 
   return (
     <div>
       <SubHeading title={'Phonebook'} />
+      <Notification color={notification?.color} message={notification?.message} />
       <Filter value={filterName} onChange={handleSearch(persons)} />
 
       <SubHeading title={'Add a new'} />
@@ -99,6 +132,7 @@ const App = () => {
       />
       <SubHeading title={'Numbers'} />
       <Persons list={filteredPersons} handleDelete={handleDelete} />
+      <Footer />
     </div>
   )
 }
