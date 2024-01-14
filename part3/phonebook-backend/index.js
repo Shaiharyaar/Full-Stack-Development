@@ -1,6 +1,15 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
+
+// adding middlewares
 app.use(express.json())
+
+morgan.token('body', req => {
+  return JSON.stringify(req.body)
+})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
 let persons = [
   {
     id: 1,
@@ -58,8 +67,7 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'Name or number is missing',
     })
-  }else if(persons.find(p=>p.name===body.name)){
-    
+  } else if (persons.find((p) => p.name === body.name)) {
     return response.status(400).json({
       error: 'Name must be unique',
     })
