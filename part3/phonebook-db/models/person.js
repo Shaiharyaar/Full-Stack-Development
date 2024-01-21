@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-const password = process.argv[2]
 const url = process.env.MONGODB_URI
 // const url = `mongodb+srv://fullstack:${password}@cluster0.vyaxhxh.mongodb.net/personApp?retryWrites=true&w=majority`
 console.log('connecting to', url)
@@ -8,7 +7,7 @@ console.log('connecting to', url)
 mongoose.set('strictQuery', false)
 mongoose
   .connect(url)
-  .then((result) => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {

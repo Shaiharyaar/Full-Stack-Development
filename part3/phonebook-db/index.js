@@ -46,7 +46,7 @@ app.get('/api/persons', (request, response) => {
     .then((persons) => {
       response.json(persons)
     })
-    .catch((err) => {
+    .catch(() => {
       // console.log({ err })
       response.status(500).end()
     })
