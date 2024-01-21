@@ -1,3 +1,3 @@
-## Phonebook Backend
+## Phonebook DB
 
-URL: https://phonebook-backend-5qel.onrender.com/
+URL: https://phonebook-db-abgi.onrender.com/
