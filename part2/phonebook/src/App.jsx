@@ -54,7 +54,10 @@ const App = () => {
         })
         .catch((err) => {
           console.log({ err })
-          setNotification({ color: 'red', message: `Failed to add '${newNameTrimmed}'!` })
+          setNotification({
+            color: 'red',
+            message: err?.response?.data?.error ?? `Failed to add '${newNameTrimmed}'!`,
+          })
         })
     }
   }
