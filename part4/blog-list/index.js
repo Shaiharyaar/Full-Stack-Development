@@ -1,7 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+require('express-async-errors')
 const app = express()
+
+const mongoose = require('mongoose')
+mongoose.set('bufferTimeoutMS', 30000)
 
 const blogsRouter = require('./controlllers/blogs')
 
@@ -28,3 +32,5 @@ app.use(middleware.unknownEndpoint)
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`)
 })
+
+module.exports = app
