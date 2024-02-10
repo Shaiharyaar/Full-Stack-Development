@@ -7,7 +7,7 @@ const app = express()
 const mongoose = require('mongoose')
 mongoose.set('bufferTimeoutMS', 30000)
 
-const blogsRouter = require('./controlllers/blogs')
+const blogsRouter = require('./controllers/blogs')
 
 const { PORT } = require('./utils/config')
 const logger = require('./utils/logger')
