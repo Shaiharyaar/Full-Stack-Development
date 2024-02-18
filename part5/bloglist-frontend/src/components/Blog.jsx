@@ -1,6 +1,8 @@
-import BlogTogglable from './BlogTogglable'
+import { useState } from 'react'
 
 const Blog = ({ blog, onLikePress, onRemovePress }) => {
+  const [show, setShow] = useState(false)
+
   const blogStyle = {
     padding: '10px 16px',
     border: '1px solid #777',
@@ -13,20 +15,32 @@ const Blog = ({ blog, onLikePress, onRemovePress }) => {
     backgroundColor: 'red',
   }
 
+  const toggleShow = () => setShow(!show)
+
   return (
-    <div style={blogStyle}>
-      <BlogTogglable label={`${blog.title} ${blog.author}`}>
-        <a href={blog.url} target={'_blank'} rel={'noreferrer'}>
-          {blog.url}
-        </a>
-        <div>
-          likes {blog.likes} <button onClick={onLikePress}>{'like'}</button>
-        </div>
-        <div>{blog?.user?.name ?? 'Anonymous'}</div>
-        <button style={deleteButtonStyle} onClick={onRemovePress}>
-          {'remove'}
+    <div style={blogStyle} className={'blog'}>
+      <div className={'blog-header'}>
+        <span className={'blog-title'}>{blog.title}</span>{' '}
+        <span className={'blog-author'}>{blog.author}</span>{' '}
+        <button className={'blog-toggle-btn'} onClick={toggleShow}>
+          {show ? 'hide' : 'view'}
         </button>
-      </BlogTogglable>
+        <div style={{ display: show ? '' : 'none' }}>
+          <a className={'blog-url'} href={blog.url} target={'_blank'} rel={'noreferrer'}>
+            {blog.url}
+          </a>
+          <div className={'blog-likes'}>
+            likes {blog.likes}{' '}
+            <button className={'blog-like-btn'} onClick={onLikePress}>
+              {'like'}
+            </button>
+          </div>
+          <div className={'blog-user'}>{blog?.user?.name ?? 'Anonymous'}</div>
+          <button style={deleteButtonStyle} onClick={onRemovePress}>
+            {'remove'}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

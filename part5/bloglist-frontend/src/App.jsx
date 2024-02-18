@@ -28,6 +28,7 @@ const App = () => {
         username,
         password,
       })
+      getBlogs()
       loginToggleRef.current.toggleVisibility()
 
       if (res?.error) {
@@ -49,6 +50,7 @@ const App = () => {
   const logout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
+    setBlogs([])
   }
 
   const createBlog = async (blogObject) => {
@@ -85,7 +87,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable ref={blogToggleRef} buttonLabel={'new blog'}>
-      <BlogForm createBlog={createBlog} />
+      <BlogForm handleSubmit={createBlog} />
     </Togglable>
   )
 
