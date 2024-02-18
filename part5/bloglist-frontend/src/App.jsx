@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -61,11 +61,13 @@ const App = () => {
       })
 
       setBlogs((prev) => [...prev, blog])
+      // update blogs again for user info update
+      getBlogs()
       blogToggleRef.current.toggleVisibility()
       setNotification({ color: 'green', message: `a new blog ${title} by ${author} added` })
     } catch (exception) {
       console.log({ exception })
-      setNotification({ color: 'red', message: `Failed to create blog. Check your inputs` })
+      setNotification({ color: 'red', message: 'Failed to create blog. Check your inputs' })
     }
   }
 
@@ -74,8 +76,8 @@ const App = () => {
       <LoginForm
         username={username}
         password={password}
-        setUsername={setUsername}
-        setPassword={setPassword}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
         handleLogin={handleLogin}
       />
     </Togglable>
@@ -87,8 +89,44 @@ const App = () => {
     </Togglable>
   )
 
+  const onLikePress = (blog) => async () => {
+    try {
+      const payload = {
+        title: blog.title,
+        author: blog.author,
+        likes: blog.likes + 1,
+        url: blog.url,
+        user: blog.user.id,
+      }
+      const res = await blogService.update(blog.id, payload)
+      if (res) {
+        getBlogs()
+      }
+    } catch (error) {
+      console.log({ error: error.message })
+    }
+  }
+
+  const onRemovePress = (blog) => async () => {
+    try {
+      if (blog.user.username === user?.username) {
+        const isConfirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+        if (isConfirm) {
+          await blogService.remove(blog.id)
+          getBlogs()
+        }
+      } else {
+        alert('You cannot update/delete this blog')
+      }
+    } catch (error) {
+      console.log({ error: error.message })
+    }
+  }
+
+  const getBlogs = () => blogService.getAll().then((blogs) => setBlogs(blogs))
+
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    getBlogs()
   }, [])
 
   useEffect(() => {
@@ -110,7 +148,6 @@ const App = () => {
     return () => {
       timeoutId && clearTimeout(timeoutId)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notification?.message])
 
   if (!user) {
@@ -134,7 +171,7 @@ const App = () => {
       <br />
       <SubHeading title={'Create new'} />
       {blogForm()}
-      <Blogs list={blogs} />
+      <Blogs list={blogs} onLikePress={onLikePress} onRemovePress={onRemovePress} />
     </div>
   )
 }
