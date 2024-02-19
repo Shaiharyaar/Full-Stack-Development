@@ -1,14 +1,19 @@
 import React from 'react'
 import Blog from './Blog'
 
-const Blogs = ({ list, onLikePress, onRemovePress }) => {
+const Blogs = ({ list, user, onLikePress, onRemovePress }) => {
   return (
     <>
       {list
-        .sort((a, b) => a.likes - b.likes)
+        .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
           <div key={blog.id}>
-            <Blog blog={blog} onLikePress={onLikePress(blog)} onRemovePress={onRemovePress(blog)} />
+            <Blog
+              blog={blog}
+              user={user}
+              onLikePress={onLikePress(blog)}
+              onRemovePress={onRemovePress(blog)}
+            />
             {/* <button onClick={handleDelete(blog)}>{'Delete'}</button> */}
           </div>
         ))}

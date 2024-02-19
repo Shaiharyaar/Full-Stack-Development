@@ -168,12 +168,14 @@ const App = () => {
       <Notification color={notification?.color} message={notification?.message} />
       <div>
         {`${user?.name} logged in `}
-        <button onClick={logout}>{'Logout'}</button>
+        <button id={'logout-btn-id'} onClick={logout}>
+          {'Logout'}
+        </button>
       </div>
       <br />
       <SubHeading title={'Create new'} />
       {blogForm()}
-      <Blogs list={blogs} onLikePress={onLikePress} onRemovePress={onRemovePress} />
+      <Blogs list={blogs} user={user} onLikePress={onLikePress} onRemovePress={onRemovePress} />
     </div>
   )
 }

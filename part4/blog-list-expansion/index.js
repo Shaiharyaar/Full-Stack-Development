@@ -35,13 +35,16 @@ app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/blogs', blogsRouter)
 
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing', testingRouter)
+}
+
 app.use(middleware.errorHandler)
 app.use(middleware.unknownEndpoint)
 
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`)
-  })
-}
+app.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT}`)
+})
 
 module.exports = app

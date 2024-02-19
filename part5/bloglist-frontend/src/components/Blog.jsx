@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, onLikePress, onRemovePress }) => {
+const Blog = ({ blog, user, onLikePress, onRemovePress }) => {
   const [show, setShow] = useState(false)
 
   const blogStyle = {
@@ -31,14 +31,16 @@ const Blog = ({ blog, onLikePress, onRemovePress }) => {
           </a>
           <div className={'blog-likes'}>
             likes {blog.likes}{' '}
-            <button className={'blog-like-btn'} onClick={onLikePress}>
+            <button id={'like-btn-id'} className={'blog-like-btn'} onClick={onLikePress}>
               {'like'}
             </button>
           </div>
           <div className={'blog-user'}>{blog?.user?.name ?? 'Anonymous'}</div>
-          <button style={deleteButtonStyle} onClick={onRemovePress}>
-            {'remove'}
-          </button>
+          {blog?.user?.username === user.username && (
+            <button id={'blog-remove-id'} style={deleteButtonStyle} onClick={onRemovePress}>
+              {'remove'}
+            </button>
+          )}
         </div>
       </div>
     </div>
