@@ -1,21 +1,24 @@
-// @ts-nocheck
-import { useDispatch, useSelector } from 'react-redux'
-import { voteAnecdote } from './actions/anecdoteAction'
+import { useEffect } from 'react'
 import AnecdoteList from './components/AnecdoteList'
+import Filter from './components/Filter'
+import Notification from './components/Notification'
 import SubHeading from './components/SubHeading'
 import AnecdoteForm from './forms/AnecdoteForm'
+import anecdoteService from './services/anecdotes'
+import { useDispatch } from 'react-redux'
+import { setAnecdote } from './redux/reducers/anecdoteReducer'
 const App = () => {
-  const anecdotes = useSelector((state) => state)
   const dispatch = useDispatch()
-
-  const vote = (id) => {
-    dispatch(voteAnecdote(id))
-  }
+  useEffect(() => {
+    anecdoteService.getAll().then((anecdote) => dispatch(setAnecdote(anecdote)))
+  }, [dispatch])
 
   return (
     <div>
       <SubHeading title={'Anecdotes'} />
-      <AnecdoteList list={anecdotes} vote={vote} />
+      <Filter />
+      <Notification />
+      <AnecdoteList />
       <SubHeading title={'create new'} />
       <AnecdoteForm />
     </div>
