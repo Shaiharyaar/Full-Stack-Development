@@ -2,15 +2,15 @@
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { voteAnecdote } from '../redux/reducers/anecdoteReducer'
-import { updateNotification } from '../redux/reducers/notificationReducer'
+import { setNotification } from '../redux/reducers/notificationReducer'
 const AnecdoteList = () => {
   const dispatch = useDispatch()
   const anecdotes = useSelector((state) => state.anecdotes)
   const filterWord = useSelector((state) => state?.filter)
 
   const vote = (anecdote) => {
-    dispatch(voteAnecdote(anecdote.id))
-    dispatch(updateNotification(`You voted '${anecdote.content}'`))
+    dispatch(voteAnecdote(anecdote))
+    dispatch(setNotification(`You voted '${anecdote.content}'`, 1000))
   }
   return (
     <div>
