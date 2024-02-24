@@ -2,22 +2,34 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import useField from "./hooks/useField";
+import { Navbar, Nav, Button, Form, Table } from "react-bootstrap";
 const Menu = () => {
   const padding = {
     paddingRight: 5,
   };
   return (
-    <div>
-      <Link to="/" style={padding}>
-        anecdotes
-      </Link>
-      <Link to="/add" style={padding}>
-        create new
-      </Link>
-      <Link to="/about" style={padding}>
-        about
-      </Link>
-    </div>
+    <Navbar collapseOnSelect expand={"md"} bg={"dark"} variant={"dark"}>
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="me-auto">
+          <Nav.Link href="#" as="span">
+            <Link to="/" style={padding}>
+              anecdotes
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link to="/add" style={padding}>
+              create new
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link to="/about" style={padding}>
+              about
+            </Link>
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   );
 };
 
@@ -45,13 +57,19 @@ const AnecdoteList = ({ anecdotes }) => {
   return (
     <div>
       <h2>Anecdotes</h2>
-      <ul>
-        {anecdotes.map((anecdote) => (
-          <Link key={anecdote.id} to={`/anecdote/${anecdote.id}`}>
-            <li>{anecdote.content}</li>
-          </Link>
-        ))}
-      </ul>
+      <Table striped>
+        <tbody>
+          {anecdotes.map((anecdote) => (
+            <tr key={anecdote.id}>
+              <td>
+                <Link key={anecdote.id} to={`/anecdote/${anecdote.id}`}>
+                  <li>{anecdote.content}</li>
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };
@@ -120,24 +138,26 @@ const CreateNew = (props) => {
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input {...content} />
-        </div>
-        <div>
-          author
-          <input {...author} />
-        </div>
-        <div>
-          url for more info
-          <input {...info} />
-        </div>
-        <button type={"submit"}>create</button>
-        <button type={"button"} onClick={handleReset}>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>{"content"}</Form.Label>
+          <Form.Control {...content} />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>{"author"}</Form.Label>
+          <Form.Control {...author} />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>{"url for more info"}</Form.Label>
+          <Form.Control {...info} />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          create
+        </Button>
+        <Button variant="secondary" type="button" onClick={handleReset}>
           reset
-        </button>
-      </form>
+        </Button>
+      </Form>
     </div>
   );
 };
@@ -176,7 +196,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className={"container"}>
       <h1>Software anecdotes</h1>
       <Menu />
       {notification && <div>{notification}</div>}
