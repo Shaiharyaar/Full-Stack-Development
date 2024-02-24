@@ -13,9 +13,16 @@ const BlogForm = ({ handleSubmit }) => {
       author,
       url
     })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+      .then(res => {
+        if (res) {
+          setTitle('')
+          setAuthor('')
+          setUrl('')
+        }
+      })
+      .catch(err => {
+        console.log({ err })
+      })
   }
 
   return (
